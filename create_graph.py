@@ -1,0 +1,49 @@
+from nltk.corpus import wordnet as wn
+from argparse import ArgumentParser
+import networkx as nx
+
+def add_node(synset, seen_nodes, graph):
+    node = synset.name
+    if node not in seen_nodes:
+        graph.add_node(node)
+        seen_nodes.add(node)
+
+def add_edge(synset1, synset2, seen_edges, graph):
+    edge = (synset1.name, synset2.name)
+    if edge not in seen_edges:
+        graph.add_edge(edge[0], edge[1])
+        seen_edges.add(edge)
+        seen_edges.add((edge[1], edge[0]))
+
+
+def create_graph():
+    seen_nodes = set()
+    seen_edges = set()
+    graph = nx.Graph()
+    all_synsets = wn.all_synsets()
+    for synset in all_synsets:
+        related_synsets = synset.also_sees()+ synset.attributes() + synset.causes() + synset.entailments() + synset.hypernyms() + synset.hyponyms() + synset.instance_hypernyms() + synset.instance_hyponyms() + synset.similar_tos() + synset.topic_domains() + synset.verb_groups()
+        lemmas = synset.lemmas
+        lemma_related = []
+        for lemma in  lemmas:
+            related_lemmas = lemma.derivationally_related_forms()+ lemma.attributes() + lemma.causes() + lemma.entailments() + lemma.hypernyms() + lemma.hyponyms() + lemma.instance_hypernyms() + lemma.instance_hyponyms() + lemma.similar_tos() + lemma.topic_domains() + lemma.verb_groups() + lemma.pertainyms() + lemma.also_sees()
+            lemma_related.extend(related_lemmas)
+        related_synsets.extend([lemma.synset for lemma in lemma_related])
+        related_synsets = list(set(related_synsets))
+        add_node(synset, seen_nodes, graph)
+        for tsynset in related_synsets:
+            add_node(tsynset, seen_nodes, graph)
+            add_edge(synset, tsynset, seen_edges, graph)
+    return graph
+           
+def main(graphfile)
+    graph = create_graph()
+    nx.write_adjlist(graph, graphfile)
+             
+             
+if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument("graphfile", help="The output file for the generated wordnet graph")
+    args = parser.parse_args()
+    if args.graphfile:
+        main(args.graphfile)
