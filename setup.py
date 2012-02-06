@@ -1,7 +1,8 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
+print find_packages()
 setup(name='metonym',
       version='0.2',
-      packages=['metonym'],
+      packages=find_packages(),
       scripts=['scripts/create_wordnet_graph'],
       author = "Sharmila Gopirajan Sivakumar",
       author_email = "siva.sharmi@gmail.com",

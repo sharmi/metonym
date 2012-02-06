@@ -1,3 +1,4 @@
+#!/home/sharmi/installs/virtualenv/testmetonym/bin/python
 from nltk.corpus import wordnet as wn
 from argparse import ArgumentParser
 import networkx as nx
@@ -22,11 +23,22 @@ def create_graph():
     graph = nx.Graph()
     all_synsets = wn.all_synsets()
     for synset in all_synsets:
-        related_synsets = synset.also_sees()+ synset.attributes() + synset.causes() + synset.entailments() + synset.hypernyms() + synset.hyponyms() + synset.instance_hypernyms() + synset.instance_hyponyms() + synset.similar_tos() + synset.topic_domains() + synset.verb_groups()
+        related_synsets = synset.also_sees()+ synset.attributes() +\
+                            synset.causes() + synset.entailments() +\
+                            synset.hypernyms() + synset.hyponyms() +\
+                            synset.instance_hypernyms() + synset.instance_hyponyms() +\
+                            synset.similar_tos() + synset.topic_domains() +\
+                            synset.verb_groups()
         lemmas = synset.lemmas
         lemma_related = []
         for lemma in  lemmas:
-            related_lemmas = lemma.derivationally_related_forms()+ lemma.attributes() + lemma.causes() + lemma.entailments() + lemma.hypernyms() + lemma.hyponyms() + lemma.instance_hypernyms() + lemma.instance_hyponyms() + lemma.similar_tos() + lemma.topic_domains() + lemma.verb_groups() + lemma.pertainyms() + lemma.also_sees()
+            related_lemmas = lemma.derivationally_related_forms()+\
+                             lemma.attributes() + lemma.causes() +\
+                             lemma.entailments() + lemma.hypernyms() +\
+                             lemma.hyponyms() + lemma.instance_hypernyms() +\
+                             lemma.instance_hyponyms() + lemma.similar_tos() +\
+                             lemma.topic_domains() + lemma.verb_groups() +\
+                             lemma.pertainyms() + lemma.also_sees()
             lemma_related.extend(related_lemmas)
         related_synsets.extend([lemma.synset for lemma in lemma_related])
         related_synsets = list(set(related_synsets))
@@ -36,7 +48,7 @@ def create_graph():
             add_edge(synset, tsynset, seen_edges, graph)
     return graph
            
-def main(graphfile)
+def main(graphfile):
     graph = create_graph()
     nx.write_adjlist(graph, graphfile)
              
