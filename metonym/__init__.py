@@ -6,7 +6,7 @@ class WordNetGraph(object):
 
     def shortest_path_distance(self, synset1, synset2):
         try:
-            return nx.shortest_path_length(self.graph, synset1.name, synset2.name)
+            return nx.shortest_path_length(self.graph, synset1.name(), synset2.name())
         except nx.NetworkXNoPath:
             return None
 
